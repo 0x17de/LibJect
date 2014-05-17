@@ -33,14 +33,20 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="src/ElfHeader.cpp" />
-		<Unit filename="src/ElfHeader.h" />
-		<Unit filename="src/ElfParser.cpp" />
-		<Unit filename="src/ElfParser.h" />
-		<Unit filename="src/ElfSectionHeader.cpp" />
-		<Unit filename="src/ElfSectionHeader.h" />
-		<Unit filename="src/ElfSectionStringTable.cpp" />
-		<Unit filename="src/ElfSectionStringTable.h" />
+		<Unit filename="src/ELF/ElfHeader.cpp" />
+		<Unit filename="src/ELF/ElfHeader.h" />
+		<Unit filename="src/ELF/ElfParser.cpp" />
+		<Unit filename="src/ELF/ElfParser.h" />
+		<Unit filename="src/ELF/ElfProgramHeader.cpp" />
+		<Unit filename="src/ELF/ElfProgramHeader.h" />
+		<Unit filename="src/ELF/ElfSectionHeader.cpp" />
+		<Unit filename="src/ELF/ElfSectionHeader.h" />
+		<Unit filename="src/ELF/ElfSectionStringTable.cpp" />
+		<Unit filename="src/ELF/ElfSectionStringTable.h" />
+		<Unit filename="src/ELF/ElfSymbolTable.cpp" />
+		<Unit filename="src/ELF/ElfSymbolTable.h" />
+		<Unit filename="src/SymbolTable.cpp" />
+		<Unit filename="src/SymbolTable.h" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<envvars />
