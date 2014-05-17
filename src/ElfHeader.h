@@ -20,6 +20,11 @@ public:
     size_t getSectionHeaderNumber() const;
     size_t getSectionStringTableIndex() const;
 
+    size_t getProgramHeaderOffset() const;
+    size_t getProgramHeaderEntryCount() const;
+    size_t getProgramHeaderSize() const;
+    size_t getProgramHeaderNumber() const;
+
 private:
     Elf64_Ehdr header;
 };

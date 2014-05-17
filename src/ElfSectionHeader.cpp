@@ -21,6 +21,7 @@ ElfSectionHeader::ElfSectionHeader(ElfParser& elfParser)
     cout << "Reading: SymTab at: " << elfHeader.getSectionStringTableIndex() << endl;
     cout << "Section header location: 0x" << hex << elfHeader.getSectionHeaderOffset() << ", Size: " << dec << elfHeader.getSectionHeaderSize() << endl;
     cout.flush();
+
     elfIn.seekg(elfHeader.getSectionHeaderOffset());
     headers.resize(elfHeader.getSectionHeaderNumber());
     elfIn.read((char*)headers.data(), elfHeader.getSectionHeaderSize());

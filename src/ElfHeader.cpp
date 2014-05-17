@@ -46,3 +46,24 @@ size_t ElfHeader::getSectionStringTableIndex() const
 {
     return header.e_shstrndx;
 }
+
+size_t ElfHeader::getProgramHeaderOffset() const
+{
+    return header.e_phoff;
+}
+
+size_t ElfHeader::getProgramHeaderEntryCount() const
+{
+    return header.e_phnum;
+}
+
+size_t ElfHeader::getProgramHeaderNumber() const
+{
+    return header.e_phnum;
+}
+
+size_t ElfHeader::getProgramHeaderSize() const
+{
+    return header.e_phnum * header.e_phentsize;
+}
+
