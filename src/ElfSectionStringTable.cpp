@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "ElfSectionStringTable.h"
 
 using namespace std;
@@ -12,6 +13,11 @@ ElfSectionStringTable::ElfSectionStringTable(std::ifstream& elfIn, const Elf64_S
     strings.resize(header->sh_size);
     elfIn.seekg(header->sh_offset);
     elfIn.read(strings.data(), header->sh_size);
+}
+
+std::string ElfSectionStringTable::getName(size_t position) const
+{
+    return string(&strings[position]);
 }
 
 std::string ElfSectionStringTable::getName(const Elf64_Shdr* header) const

@@ -9,6 +9,8 @@ class ElfHeader
 {
 public:
     ElfHeader(std::ifstream& file);
+    ~ElfHeader();
+
     bool isArch_x86_32() const;
     bool isArch_x86_64() const;
 

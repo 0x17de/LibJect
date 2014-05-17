@@ -1,14 +1,22 @@
 #include <iostream>
+#include <fstream>
+#include "ElfParser.h"
+#include "ElfHeader.h"
 #include "ElfSectionHeader.h"
+#include "ElfSymbolTable.h"
+#include "SymbolTable.h"
 
 using namespace std;
 
-ElfSectionHeader::ElfSectionHeader(std::ifstream& elfIn, ElfHeader& elfHeader)
+ElfSectionHeader::ElfSectionHeader(ElfParser& elfParser)
 :
-    elfHeader(elfHeader),
+    elfParser(elfParser),
     idSymTab(-1),
     idStrTab(-1)
 {
+    ElfHeader& elfHeader = *elfParser.elfHeader.get();
+    ifstream& elfIn = elfParser.elfIn;
+
     cout << endl;
     cout << "Reading: SymTab at: " << elfHeader.getSectionStringTableIndex() << endl;
     cout << "Section header location: 0x" << hex << elfHeader.getSectionHeaderOffset() << ", Size: " << dec << elfHeader.getSectionHeaderSize() << endl;
@@ -27,41 +35,42 @@ ElfSectionHeader::ElfSectionHeader(std::ifstream& elfIn, ElfHeader& elfHeader)
         cout << elfSectionStringTable->getName(&header) << " ";
     }
     cout << endl << endl;
+}
+
+ElfSectionHeader::~ElfSectionHeader()
+{
+}
+
+void ElfSectionHeader::readSymbolTable(SymbolTable& symbolTable)
+{
+    ElfHeader& elfHeader = *elfParser.elfHeader.get();
+    ifstream& elfIn = elfParser.elfIn;
 
     for(size_t i = 0; i < headers.size(); ++i)
     {
         Elf64_Shdr& header = headers[i];
         switch(header.sh_type)
         {
-		case SHT_SYMTAB:
+        case SHT_SYMTAB:
         case SHT_DYNSYM:
-			idSymTab = i; // @TODO: Verify correctness
+            idSymTab = i; // @TODO: Verify correctness
             break;
-		case SHT_STRTAB:
-		    if (i != elfHeader.getSectionStringTableIndex())
-		    {
-		        idStrTab = i;
-		        cout << "Additional SymTab at position: " << i << endl;
-                additionalSymbolTables.push_back(ElfSectionStringTable(elfIn, &headers.at(i)));
-                cout << endl;
+        case SHT_STRTAB:
+            if (i != elfHeader.getSectionStringTableIndex())
+            {
+                ElfSymbolTable elfSymbolTable(elfIn, &headers.at(idSymTab));
+                ElfSectionStringTable elfStringTable(elfIn, &headers.at(i));
 
-                // @TODO: Load symbol table
+                symbolTable.read(elfSymbolTable, elfStringTable);
 
                 idSymTab = -1;
-		    }
-		    break;
+            }
+            break;
         }
     }
-
-    cout << "Additional SymTab types:" << endl;
-    for(ElfSectionStringTable& additionalSymbolTable : additionalSymbolTables)
-    {
-        cout << elfSectionStringTable->getName(additionalSymbolTable.header) << " ";
-    }
-    cout << endl;
 }
 
 const Elf64_Shdr* ElfSectionHeader::getStringTableHeader() const
 {
-    return &headers.at(elfHeader.getSectionStringTableIndex());
+    return &headers.at(elfParser.elfHeader->getSectionStringTableIndex());
 }
