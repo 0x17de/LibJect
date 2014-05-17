@@ -19,18 +19,7 @@ LdResolver::LdResolver(ElfParser& elfParser, const Process& process)
     if (interpreterPath.empty())
         throw runtime_error("INTERP empty: no alternatives implemented yet");
 
-    ProcMap procMap(process.pid);
-    std::list<ProcEntry*> entryLdList = procMap.findLibrary("libdl");
-    cout << entryLdList.size() << endl;
-    if (entryLdList.size() > 0)
-    {
-        string libPath = entryLdList.front()->path;
-        ElfParser elfParser(libPath);
-    }
-    else
-    {
-        throw runtime_error("libdl was not linked!");
-    }
+    procMap.reset(new ProcMap(process.pid));
 
     // find interp in procmap
     // find ld
@@ -45,7 +34,24 @@ LdResolver::~LdResolver()
 {
 }
 
-void LdResolver::resolve(Symbol* symbol)
+bool LdResolver::resolve(const std::string& libname, Symbol* symbol)
 {
-    // symbol->address = 1;
+    std::list<ProcEntry*> entryLdList = procMap->findLibrary("libdl");
+    cout << entryLdList.size() << endl;
+    if (entryLdList.size() > 0)
+    {
+        ProcEntry* libEntry = entryLdList.front();
+        string libPath = libEntry->path;
+        ElfParser elfParser(libPath);
+        Symbol* symDlopen = elfParser.symbolTable->find(symbol->name);
+
+        if (symDlopen == 0)
+            return false;
+
+        cout << "dlopen found at 0x" << hex << symDlopen->address << " starts at 0x" << libEntry->addressBegin << endl;
+        symbol->address = symDlopen->address + libEntry->addressBegin;
+
+        return true;
+    }
+    return false;
 }

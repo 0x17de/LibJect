@@ -6,7 +6,14 @@
 #include <vector>
 
 
-enum class SymbolType;
+enum class SymbolType
+{
+    Unknown,
+    Function,
+    File,
+    Object,
+    Section
+};
 
 class ElfSymbolTable;
 class ElfSectionStringTable;

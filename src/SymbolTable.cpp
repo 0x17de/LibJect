@@ -5,15 +5,6 @@
 
 using namespace std;
 
-enum class SymbolType
-{
-    Unknown,
-    Function,
-    File,
-    Object,
-    Section
-};
-
 Symbol::Symbol(const std::string& name, size_t address, size_t size, SymbolType type)
 :
     name(name),

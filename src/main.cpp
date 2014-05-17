@@ -21,6 +21,9 @@ using namespace std;
 int main()
 {
     string fileName = "./crackme";
+    std::list<const char*> params = {"qweasd"};
+    string baseName = "crackme";
+
     cout << "Parsing ELF: " << fileName << endl;
 
     ElfParser elfParser(fileName);
@@ -34,9 +37,13 @@ int main()
 
 
     SymbolTable& symbolTable = *elfParser.symbolTable.get();
+
+    /* Symbol* sDlopen = symbolTable.find("dlopen");
+    if (!sDlopen)
+        throw runtime_error("'dlopen' was not dynamically linked");
     Symbol* sMalloc = symbolTable.find("malloc");
     if (!sMalloc)
-        throw runtime_error("'malloc' was not dynamically linked");
+        throw runtime_error("'malloc' was not dynamically linked"); */
 
     Symbol* sStart = symbolTable.find("main");
     if (!sStart)
@@ -58,7 +65,7 @@ int main()
     // redirect pipes of child process
     // http://stackoverflow.com/questions/9405985/linux-3-0-executing-child-process-with-piped-stdin-stdout
 
-    Process p(fileName, fileName.substr(fileName.find_last_of('/') + 1), {}, {"LD_PRELOAD=libdl.so"});
+    Process p(fileName, baseName, params, {"LD_PRELOAD=libdl.so"});
 
     // break at _start function
     {
@@ -73,8 +80,11 @@ int main()
     }
 
     LdResolver ldResolver(elfParser, p);
-    ldResolver.resolve(sMalloc);
-    cout << "'malloc' found at 0x" << hex << sMalloc->address << endl;
+    Symbol sDlopen("dlopen", 0, 0, SymbolType::Function);
+    if (ldResolver.resolve("libdl", &sDlopen))
+    {
+        cout << "'dlopen' found at 0x" << hex << sDlopen.address << endl; // @TODO: address may be wront
+    }
 
     p.saveRegs();
 
@@ -84,11 +94,9 @@ int main()
     p.setRegs(regs);
     // nullify stack?
 
-
     p.backupStack(4);
-    // @TODO: inject here
+    // @TODO: inject code here
     p.restoreStack();
-
 
     p.restoreRegs();
 
