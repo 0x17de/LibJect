@@ -30,7 +30,7 @@ public:
 
     void add(const std::string& name, size_t value, size_t size, SymbolType type);
     void read(const ElfSymbolTable& symbolTable, const ElfSectionStringTable& stringTable);
-    const Symbol* find(const std::string& name) const;
+    Symbol* find(const std::string& name);
     SymbolType getType(unsigned char symInfo) const;
     char typeToChar(SymbolType symbolType) const;
 

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 
 #include "ElfParser.h"
@@ -13,6 +14,7 @@ ElfParser::ElfParser(const std::string& fileName)
     fileName(fileName),
     elfIn(fileName)
 {
+    cout << "PARSING: " << fileName << endl;
     checkArch();
 
     symbolTable.reset(new SymbolTable());

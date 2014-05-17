@@ -6,15 +6,31 @@
 #include <list>
 #include <sys/user.h>
 
+struct Breakpoint
+{
+    Breakpoint(size_t address, char byte);
+    size_t address;
+    char byte;
+};
+
+union size_char_t
+{
+    size_t l;
+    char c[sizeof(size_t)];
+};
+
 class Process
 {
 public:
-    Process(const std::string& path, const std::string& name, std::list<const char*> params);
+    Process(const std::string& path, const std::string& name, std::list<const char*> params, std::list<const char*> envs);
     ~Process();
 
     void pause();
     void cont();
     void wait();
+
+    Breakpoint breakAt(size_t address);
+    void removeBreakpoint(Breakpoint breakpoint);
 
     void saveRegs();
     void restoreRegs();

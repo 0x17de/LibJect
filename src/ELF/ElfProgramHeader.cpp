@@ -71,6 +71,11 @@ ElfProgramHeader::ElfProgramHeader(ElfParser& elfParser)
     cout << endl;
 }
 
+std::string ElfProgramHeader::getInterpreterPath()
+{
+    return interpreterPath;
+}
+
 ElfProgramHeader::~ElfProgramHeader()
 {
 }

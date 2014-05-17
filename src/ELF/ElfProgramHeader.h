@@ -13,6 +13,7 @@ public:
     ~ElfProgramHeader();
 
     ElfParser& elfParser;
+    std::string getInterpreterPath();
 
 private:
     std::vector<Elf64_Phdr> headers;

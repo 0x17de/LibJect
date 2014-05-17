@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -6,7 +8,14 @@
 
 using namespace std;
 
-Process::Process(const std::string& path, const std::string& name, std::list<const char*> params)
+Breakpoint::Breakpoint(size_t address, char byte)
+:
+    address(address),
+    byte(byte)
+{
+}
+
+Process::Process(const std::string& path, const std::string& name, std::list<const char*> params, std::list<const char*> envs)
 :
     name(name)
 {
@@ -14,11 +23,13 @@ Process::Process(const std::string& path, const std::string& name, std::list<con
     if (pid == 0)
     {
         ptrace(PTRACE_TRACEME, 0, 0, 0);
-        vector<const char*> execParams;
+        vector<const char*> execParams, execEnvs;
         execParams.push_back("name");
         execParams.insert(execParams.end(), params.begin(), params.end());
         execParams.push_back(0);
-        execv(path.c_str(), const_cast<char* const*>(execParams.data()));
+        execEnvs.insert(execEnvs.end(), envs.begin(), envs.end());
+        execEnvs.push_back(0);
+        execve(path.c_str(), const_cast<char* const*>(execParams.data()), const_cast<char* const*>(execEnvs.data()));
     }
     else
     {
@@ -46,6 +57,28 @@ user_regs_struct Process::getRegs()
 void Process::setRegs(user_regs_struct s)
 {
     ptrace(PTRACE_GETREGS, pid, 0, &s);
+}
+
+Breakpoint Process::breakAt(size_t address)
+{
+    size_char_t data;
+    data.l = ptrace(PTRACE_PEEKDATA, pid, address, 0);
+
+    Breakpoint breakpoint(address, data.c[0]);
+    cout << "Breakpoint at 0x" << hex << address << ", byte was: " << (int)(data.c[0] & 0xFF) << endl;
+    data.c[0] = 0xCC;
+    ptrace(PTRACE_POKEDATA, pid, address, data.l);
+
+    return breakpoint;
+}
+
+void Process::removeBreakpoint(Breakpoint breakpoint)
+{
+    size_char_t data;
+    data.l = ptrace(PTRACE_PEEKDATA, pid, breakpoint.address, 0);
+    cout << "Remove breakpoint at 0x" << hex << breakpoint.address << ", byte: " << (int)(data.c[0] & 0xFF) << endl;
+    data.c[0] = breakpoint.byte;
+    ptrace(PTRACE_POKEDATA, pid, breakpoint.address, data.l);
 }
 
 void Process::backupStack(size_t size)

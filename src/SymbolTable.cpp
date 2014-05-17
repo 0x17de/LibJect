@@ -40,9 +40,9 @@ void SymbolTable::add(const std::string& name, size_t value, size_t size, Symbol
     symbols.push_back({name, value, size, type});
 }
 
-const Symbol* SymbolTable::find(const std::string& name) const
+Symbol* SymbolTable::find(const std::string& name)
 {
-    for(const Symbol& symbol : symbols)
+    for(Symbol& symbol : symbols)
     {
         if (symbol.name == name)
             return &symbol;
