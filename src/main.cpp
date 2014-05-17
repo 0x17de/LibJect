@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <iostream>
-#include <ElfParser.h>
-#include <ElfHeader.h>
+#include "ELF/ElfParser.h"
+#include "ELF/ElfHeader.h"
 
 using namespace std;
 

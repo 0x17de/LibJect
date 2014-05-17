@@ -1,7 +1,7 @@
 #include <iostream>
 #include "SymbolTable.h"
-#include "ElfSymbolTable.h"
-#include "ElfSectionStringTable.h"
+#include "ELF/ElfSymbolTable.h"
+#include "ELF/ElfSectionStringTable.h"
 
 using namespace std;
 
