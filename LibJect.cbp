@@ -45,6 +45,8 @@
 		<Unit filename="src/ELF/ElfSectionStringTable.h" />
 		<Unit filename="src/ELF/ElfSymbolTable.cpp" />
 		<Unit filename="src/ELF/ElfSymbolTable.h" />
+		<Unit filename="src/Process.cpp" />
+		<Unit filename="src/Process.h" />
 		<Unit filename="src/SymbolTable.cpp" />
 		<Unit filename="src/SymbolTable.h" />
 		<Unit filename="src/main.cpp" />

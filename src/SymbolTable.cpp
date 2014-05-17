@@ -40,6 +40,16 @@ void SymbolTable::add(const std::string& name, size_t value, size_t size, Symbol
     symbols.push_back({name, value, size, type});
 }
 
+const Symbol* SymbolTable::find(const std::string& name) const
+{
+    for(const Symbol& symbol : symbols)
+    {
+        if (symbol.name == name)
+            return &symbol;
+    }
+    return nullptr;
+}
+
 void SymbolTable::read(const ElfSymbolTable& symbolTable, const ElfSectionStringTable& stringTable)
 {
     int symbolCount = symbolTable.getSymbolCount();
