@@ -8,3 +8,7 @@ Status
 - Processes can be spawned, paused and resumed
 - Addresses of functions can be found and resolved (but has to be verified if their address is correct
 - Basic breakpoints
+
+Missing
+- Attach to running processes
+- Inject lib after attaching to running process (libdl required)
